@@ -22,12 +22,11 @@ function $Promise(executor){
     },
     
     this._callHandlers = function(){
-        this._handlerGroups.forEach(handler => {
-            const v = this._value
+        while (this._handlerGroups.length) {
+            const handler = this._handlerGroups.shift(), v = this._value
             if (this._state === "fulfilled" && handler.successCb) handler.successCb(v)
             if (this._state === "rejected" && handler.errorCb) handler.errorCb(v)
-        })
-        this._handlerGroups = []
+        }
     }.bind(this),
     
     this._internalResolve = function(someData){
