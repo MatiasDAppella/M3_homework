@@ -17,7 +17,7 @@ function bash(){
         else print(`command not found: ${cmd}`)
     })
 }
-    
+
 bash();
 
 module.exports = {
