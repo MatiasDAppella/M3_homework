@@ -6,21 +6,46 @@ Promises Workshop: construye la libreria de ES6 promises, pledge.js
 function $Promise(executor){
     this._state = "pending",
     this._value,
+    this._handlerGroups = [],
 
+    this.then = function(successCb, errorCb){
+        const v = this._value
+        const isFunction = (cb) => {
+            if (typeof cb === "function") return cb
+        }
+
+        this._handlerGroups.push({
+            successCb: isFunction(successCb),
+            errorCb: isFunction(errorCb)
+        })
+
+        if (this._state !== "pending") this._callHandlers(v)
+    },
+    
+    this._callHandlers = function(){
+        this._handlerGroups.forEach(handler => {
+            const v = this._value
+            if (this._state === "fulfilled" && handler.successCb) handler.successCb(v)
+            if (this._state === "rejected" && handler.errorCb) handler.errorCb(v)
+        })
+    }.bind(this),
+    
     this._internalResolve = function(someData){
         if (this._state === "pending"){
             this._state = "fulfilled"
             this._value = someData
+            this._callHandlers()
         }
     }.bind(this),
-
+    
     this._internalReject = function(myReason){
         if (this._state === "pending"){
             this._state = "rejected"
             this._value = myReason
+            this._callHandlers()
         }
     }.bind(this)
-
+    
     if (typeof executor !== "function") throw TypeError("executor must be a function")
     executor(this._internalResolve, this._internalReject)
 };
