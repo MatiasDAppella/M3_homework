@@ -9,7 +9,6 @@ function $Promise(executor){
     this._handlerGroups = [],
 
     this.then = function(successCb, errorCb){
-        const v = this._value
         const isFunction = (cb) => {
             if (typeof cb === "function") return cb
         }
@@ -19,7 +18,7 @@ function $Promise(executor){
             errorCb: isFunction(errorCb)
         })
 
-        if (this._state !== "pending") this._callHandlers(v)
+        if (this._state !== "pending") this._callHandlers()
     },
     
     this._callHandlers = function(){
@@ -28,6 +27,7 @@ function $Promise(executor){
             if (this._state === "fulfilled" && handler.successCb) handler.successCb(v)
             if (this._state === "rejected" && handler.errorCb) handler.errorCb(v)
         })
+        this._handlerGroups = []
     }.bind(this),
     
     this._internalResolve = function(someData){
