@@ -20,6 +20,10 @@ function $Promise(executor){
 
         if (this._state !== "pending") this._callHandlers()
     },
+
+    this.catch = function(errorCb){
+        this.then(null, errorCb)
+    },
     
     this._callHandlers = function(){
         while (this._handlerGroups.length) {
