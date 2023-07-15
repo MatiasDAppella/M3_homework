@@ -12,24 +12,49 @@ function $Promise(executor){
         const isFunction = (cb) => {
             if (typeof cb === "function") return cb
         }
+        const downstreamPromise = new $Promise(() => {})
 
         this._handlerGroups.push({
             successCb: isFunction(successCb),
-            errorCb: isFunction(errorCb)
+            errorCb: isFunction(errorCb),
+            downstreamPromise: downstreamPromise
         })
 
         if (this._state !== "pending") this._callHandlers()
+        return downstreamPromise
     },
 
     this.catch = function(errorCb){
-        this.then(null, errorCb)
+        return this.then(null, errorCb)
     },
     
     this._callHandlers = function(){
         while (this._handlerGroups.length) {
             const handler = this._handlerGroups.shift(), v = this._value
-            if (this._state === "fulfilled" && handler.successCb) handler.successCb(v)
-            if (this._state === "rejected" && handler.errorCb) handler.errorCb(v)
+            if (this._state === "fulfilled" && handler.successCb) {
+                try {
+                    const aux = handler.successCb(v)
+                    if (aux instanceof $Promise) {
+                        handler.downstreamPromise = aux
+                    }
+                    else handler.downstreamPromise._internalResolve(aux) 
+                } catch (error){
+                    handler.downstreamPromise._internalReject(error)
+                }
+            }
+            if (this._state === "fulfilled" && !handler.successCb) {
+                handler.downstreamPromise._internalResolve(v)
+            }
+            if (this._state === "rejected" && handler.errorCb) {
+                try {
+                    handler.downstreamPromise._internalResolve(handler.errorCb(v))
+                } catch (error) {
+                    handler.downstreamPromise._internalReject(error)
+                }
+            }
+            if (this._state === "rejected" && !handler.errorCb) {
+                handler.downstreamPromise._internalReject(v)
+            }
         }
     }.bind(this),
     
