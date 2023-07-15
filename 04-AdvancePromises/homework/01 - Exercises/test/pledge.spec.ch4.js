@@ -156,7 +156,7 @@ describe('por una dada promiseA (pA)', function(){
       expect( promiseB ).toFulfillWith( 'testing', done );
     }, FAST_TIMEOUT);
 
-    xit("si el error handler de pA retorna pZ la cual se completa, pB imita a pZ", function (done) {
+    it("si el error handler de pA retorna pZ la cual se completa, pB imita a pZ", function (done) {
       var promiseZ = new $Promise(noop);
       var promiseB = promiseA.catch(function(){
         return promiseZ;
@@ -166,7 +166,7 @@ describe('por una dada promiseA (pA)', function(){
       expect( promiseB ).toFulfillWith( 'testing', done );
     }, FAST_TIMEOUT);
 
-    xit("si el success handler de pA retorna pZ que se rechaza, pB imita a pZ", function (done) {
+    it("si el success handler de pA retorna pZ que se rechaza, pB imita a pZ", function (done) {
       var promiseZ = new $Promise(noop);
       var promiseB = promiseA.then(function(){
         return promiseZ;
@@ -176,7 +176,7 @@ describe('por una dada promiseA (pA)', function(){
       expect( promiseB ).toRejectWith( 'testing', done );
     }, FAST_TIMEOUT);
 
-    xit("si el error handler de pA retorna pZ que se rechaza, pB imita a pZ", function (done) {
+    it("si el error handler de pA retorna pZ que se rechaza, pB imita a pZ", function (done) {
       var promiseZ = new $Promise(noop);
       var promiseB = promiseA.catch(function(){
         return promiseZ;
@@ -193,7 +193,7 @@ describe('por una dada promiseA (pA)', function(){
     // la nueva promesa. Pero por supuesto podés conectar en promesas
     // ya colocadas! Tu solución puede ya estar pasando esto.
     // Pero quizás no...
-    xit('igual conecta correctamente si la promesa ya esta colocada', function (done) {
+    it('igual conecta correctamente si la promesa ya esta colocada', function (done) {
       // utility / helper functions
       var count = 0, shouldFulfill, shouldReject;
       function countPassed () { if (++count === 10) done(); }
@@ -237,7 +237,7 @@ describe('por una dada promiseA (pA)', function(){
 
   // Otra demostración. Esto debería funcionar si los previos specs pasaron.
 
-  xit('`.then` puede ser encadenado muchas veces', function(){
+  it('`.then` puede ser encadenado muchas veces', function(){
     var add1 = function (num) { return ++num; };
     var test = 0;
     promiseA

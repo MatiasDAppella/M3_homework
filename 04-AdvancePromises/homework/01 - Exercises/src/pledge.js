@@ -34,8 +34,11 @@ function $Promise(executor){
             if (this._state === "fulfilled" && handler.successCb) {
                 try {
                     const aux = handler.successCb(v)
-                    if (aux instanceof $Promise) {
-                        handler.downstreamPromise = aux
+                    if (aux instanceof $Promise){
+                        aux.then(
+                              handler.downstreamPromise._internalResolve,
+                              handler.downstreamPromise._internalReject
+                        )
                     }
                     else handler.downstreamPromise._internalResolve(aux) 
                 } catch (error){
@@ -47,7 +50,14 @@ function $Promise(executor){
             }
             if (this._state === "rejected" && handler.errorCb) {
                 try {
-                    handler.downstreamPromise._internalResolve(handler.errorCb(v))
+                    const aux = handler.errorCb(v)
+                    if (aux instanceof $Promise){
+                        aux.then(
+                              handler.downstreamPromise._internalResolve,
+                              handler.downstreamPromise._internalReject
+                        )
+                    }
+                    else handler.downstreamPromise._internalResolve(aux)
                 } catch (error) {
                     handler.downstreamPromise._internalReject(error)
                 }
