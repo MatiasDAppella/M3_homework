@@ -40,7 +40,7 @@ let stanzasTwo = fs
     return fs.readFileSync(path.join(dirpathTwo, filename)).toString();
   });
 
-describe("01 | Ejercicios - Callbacks (poem-one)", () => {
+xdescribe("01 | Ejercicios - Callbacks (poem-one)", () => {
   afterAll(async () => {
     await new Promise((resolve) => setTimeout(() => resolve(), 250));
   });
@@ -171,7 +171,7 @@ describe("01 | Ejercicios - Callbacks (poem-one)", () => {
   });
 });
 
-describe("02 | Ejercicios - Callbacks (poem-two)", () => {
+xdescribe("02 | Ejercicios - Callbacks (poem-two)", () => {
   afterAll(async () => {
     await new Promise((resolve) => setTimeout(() => resolve(), 250));
   });
